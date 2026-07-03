@@ -1,0 +1,15 @@
+{
+  "name": "heat-exchange-calculator",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Browser-based heat storage pipe heat exchange calculator.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "check": "node --check app.js && node --check server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "UNLICENSED"
+}

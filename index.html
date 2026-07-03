@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Heat Exchange Calculator</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Q = U * A * LMTD</p>
+          <h1>Heat Exchange Calculator</h1>
+        </div>
+        <div class="top-result">
+          <span>Overall heat exchange coefficient U</span>
+          <strong id="topConductance">-</strong>
+        </div>
+      </header>
+
+      <section class="layout">
+        <aside class="controls">
+          <label class="field solve-field">
+            <span>Temperature unit for all temperature inputs and outputs</span>
+            <select id="temperatureUnit">
+              <option value="C">Celsius (deg C)</option>
+              <option value="K">Kelvin (K)</option>
+              <option value="F">Fahrenheit (deg F)</option>
+            </select>
+          </label>
+
+          <label class="field solve-field">
+            <span>Calculate missing parameter</span>
+            <select id="solveFor">
+              <option value="heatRate">Heat transfer rate dQ/dt</option>
+              <option value="conductance">Overall heat exchange coefficient U</option>
+              <option value="deltaT">Fluid temperature rise</option>
+              <option value="pipeLength">Pipe length</option>
+              <option value="fluidOutletTemp">Fluid outlet temperature</option>
+              <option value="fluidVelocity">Fluid velocity</option>
+              <option value="outsideAlpha">Outside alpha</option>
+            </select>
+          </label>
+
+          <section class="input-group">
+            <div class="group-heading">
+              <span class="group-number">1</span>
+              <h2>Fluid in pipe</h2>
+            </div>
+            <div class="grid">
+              <label class="field wide">
+                <span>Fluid preset, or choose Custom / manual</span>
+                <select id="insidePreset"></select>
+              </label>
+              <label class="field"><span>Density rho (kg/m3)</span><input id="insideDensity" value="997" inputmode="decimal" /></label>
+              <label class="field"><span>Kinematic viscosity nu (mm2/s)</span><input id="insideViscosity" value="0.893" inputmode="decimal" /></label>
+              <label class="field"><span>Heat capacity cp (J/kg K)</span><input id="insideCp" value="4180" inputmode="decimal" /></label>
+              <label class="field"><span>Thermal conductivity k (W/m K)</span><input id="insideK" value="0.606" inputmode="decimal" /></label>
+              <label class="field"><span>Prandtl number Pr</span><input id="insidePr" value="" placeholder="auto" inputmode="decimal" /></label>
+              <label class="field"><span>Velocity (m/s)</span><input id="fluidVelocity" value="1.2" inputmode="decimal" /></label>
+              <label class="field"><span>Inlet temp (deg C)</span><input id="fluidInletTemp" value="20" inputmode="decimal" /></label>
+              <label class="field"><span>Outlet temp (deg C)</span><input id="fluidOutletTemp" value="" placeholder="auto or target" inputmode="decimal" /></label>
+              <label class="field"><span>Min allowed temp (deg C)</span><input id="insideMinTemp" value="0" inputmode="decimal" /></label>
+              <label class="field"><span>Max allowed temp (deg C)</span><input id="insideMaxTemp" value="100" inputmode="decimal" /></label>
+              <label class="field"><span>Manual fluid alpha (W/m2 K)</span><input id="insideAlpha" value="" placeholder="auto from flow" inputmode="decimal" /></label>
+            </div>
+          </section>
+
+          <section class="input-group">
+            <div class="group-heading">
+              <span class="group-number">2</span>
+              <h2>Pipe</h2>
+            </div>
+            <div class="grid">
+              <label class="field wide">
+                <span>Pipe material</span>
+                <select id="pipePreset"></select>
+              </label>
+              <label class="field"><span>Pipe length (m, leave empty if calculating length)</span><input id="pipeLength" value="10" inputmode="decimal" /></label>
+              <label class="field"><span>Inner diameter (mm)</span><input id="innerDiameter" value="25" inputmode="decimal" /></label>
+              <label class="field"><span>Wall thickness (mm)</span><input id="wallThickness" value="2" inputmode="decimal" /></label>
+              <label class="field"><span>Pipe conductivity k (W/m K)</span><input id="pipeK" value="16" inputmode="decimal" /></label>
+              <label class="field"><span>Heat rate target Q (kW)</span><input id="heatRateTarget" value="" placeholder="optional target" inputmode="decimal" /></label>
+              <label class="field"><span>Fluid temperature rise Tout - Tin (K)</span><input id="deltaT" value="10" placeholder="or use outlet temp" inputmode="decimal" /></label>
+            </div>
+          </section>
+
+          <section class="input-group">
+            <div class="group-heading">
+              <span class="group-number">3</span>
+              <h2>Medium around pipe</h2>
+            </div>
+            <div class="segmented" role="group" aria-label="Outside medium type">
+              <label><input type="radio" name="outsideType" value="fluid" checked /> <span>Fluid</span></label>
+              <label><input type="radio" name="outsideType" value="solid" /> <span>Hard form</span></label>
+            </div>
+            <div class="grid">
+              <label class="field wide">
+                <span>Medium preset, or choose Custom / manual</span>
+                <select id="outsidePreset"></select>
+              </label>
+              <label class="field outside-fluid"><span>Density rho (kg/m3)</span><input id="outsideDensity" value="1.18" inputmode="decimal" /></label>
+              <label class="field outside-fluid"><span>Kinematic viscosity nu (mm2/s)</span><input id="outsideViscosity" value="15.7" inputmode="decimal" /></label>
+              <label class="field outside-fluid"><span>Heat capacity cp (J/kg K)</span><input id="outsideCp" value="1007" inputmode="decimal" /></label>
+              <label class="field"><span>Thermal conductivity k (W/m K)</span><input id="outsideK" value="0.026" inputmode="decimal" /></label>
+              <label class="field outside-fluid"><span>Prandtl number Pr</span><input id="outsidePr" value="" placeholder="auto" inputmode="decimal" /></label>
+              <label class="field outside-fluid"><span>Outside velocity (m/s)</span><input id="outsideVelocity" value="2" inputmode="decimal" /></label>
+              <label class="field outside-fluid"><span>Manual outside alpha (W/m2 K)</span><input id="outsideAlpha" value="" placeholder="auto from flow" inputmode="decimal" /></label>
+              <label class="field outside-solid"><span>Medium thickness (mm)</span><input id="outsideThickness" value="50" inputmode="decimal" /></label>
+              <label class="field"><span>Storage tank maximum temperature (deg C)</span><input id="outsideTemp" value="90" inputmode="decimal" /></label>
+              <label class="field"><span>Min allowed temp (deg C)</span><input id="outsideMinTemp" value="-20" inputmode="decimal" /></label>
+              <label class="field"><span>Max allowed temp (deg C)</span><input id="outsideMaxTemp" value="200" inputmode="decimal" /></label>
+            </div>
+          </section>
+
+          <section class="input-group compact-group">
+            <div class="group-heading">
+              <span class="group-number">R</span>
+              <h2>Velocity range</h2>
+            </div>
+            <div class="grid three">
+              <label class="field"><span>Min (m/s)</span><input id="rangeMin" value="0.2" inputmode="decimal" /></label>
+              <label class="field"><span>Max (m/s)</span><input id="rangeMax" value="2.4" inputmode="decimal" /></label>
+              <label class="field"><span>Steps</span><input id="rangeSteps" value="7" inputmode="numeric" /></label>
+            </div>
+          </section>
+
+          <div class="actions">
+            <button id="calculateBtn" class="primary" type="button">Calculate</button>
+            <button id="resetBtn" class="secondary" type="button">Reset</button>
+          </div>
+          <p id="message" class="message" aria-live="polite"></p>
+
+          <section class="input-group compact-group">
+            <div class="group-heading">
+              <span class="group-number">S</span>
+              <h2>Project profiles and experiments</h2>
+            </div>
+            <div class="profile-tools">
+              <label class="field"><span>Active project profile</span><select id="projectProfile"></select></label>
+              <div class="actions small-actions profile-actions">
+                <button id="newProfileBtn" class="secondary" type="button">New profile</button>
+                <button id="deleteProfileBtn" class="secondary" type="button">Delete profile</button>
+              </div>
+            </div>
+            <div class="section-divider"></div>
+            <label class="field wide"><span>Experiment name</span><input id="experimentName" value="" placeholder="example: water 25 mm pipe at 90 C tank" /></label>
+            <div class="actions small-actions">
+              <button id="saveExperimentBtn" class="secondary" type="button">Save</button>
+              <button id="clearExperimentsBtn" class="secondary" type="button">Clear</button>
+            </div>
+            <div id="experimentList" class="experiment-list"></div>
+          </section>
+        </aside>
+
+        <section class="results">
+          <div class="pipe-visual">
+            <canvas id="pipeCanvas" width="900" height="280"></canvas>
+          </div>
+
+          <section class="metrics">
+            <article class="metric hero">
+              <span id="mainLabel">Heat transfer rate dQ/dt</span>
+              <strong id="mainValue">-</strong>
+              <small id="mainNote">-</small>
+            </article>
+            <article class="metric">
+              <span>Overall coefficient U</span>
+              <strong id="conductanceValue">-</strong>
+              <small id="uaNote">W/m2 K from Nusselt and resistances</small>
+            </article>
+            <article class="metric">
+              <span>Log mean temperature difference</span>
+              <strong id="deltaValue">-</strong>
+              <small id="deltaNote">medium to pipe fluid</small>
+            </article>
+            <article class="metric">
+              <span>Fluid outlet</span>
+              <strong id="outletValue">-</strong>
+              <small id="outletNote">energy balance</small>
+            </article>
+          </section>
+
+          <section class="details">
+            <div>
+              <h2>Resistance model</h2>
+              <dl id="resistanceList"></dl>
+            </div>
+            <div>
+              <h2>Flow and limits</h2>
+              <dl id="flowList"></dl>
+            </div>
+          </section>
+
+          <section class="table-section">
+            <div class="table-heading">
+              <h2>Inside velocity sweep</h2>
+              <span id="rangeNote">same pipe and medium</span>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>v (m/s)</th>
+                    <th>alpha in (W/m2 K)</th>
+                    <th>a (W/K)</th>
+                    <th>dQ/dt (kW)</th>
+                    <th>Outlet (deg C)</th>
+                    <th>Re</th>
+                  </tr>
+                </thead>
+                <tbody id="rangeBody"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="table-section references">
+            <h2>Formula notes</h2>
+            <p>Heat transfer uses Q = U * A * LMTD. Internal alpha is estimated from Reynolds, Prandtl, and Nusselt number when manual alpha is blank. Preset values are editable starting points.</p>
+            <p><a href="https://en.wikipedia.org/wiki/Logarithmic_mean_temperature_difference" target="_blank" rel="noreferrer">LMTD reference</a> · <a href="https://en.wikipedia.org/wiki/Nusselt_number" target="_blank" rel="noreferrer">Nusselt reference</a></p>
+          </section>
+        </section>
+      </section>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>
