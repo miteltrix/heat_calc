@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="520" viewBox="0 0 1100 520" role="img" aria-labelledby="title desc">
+  <title id="title">Heat storage tank and pipe model</title>
+  <desc id="desc">Diagram showing a pipe inside a hot storage tank, fluid inlet and outlet temperatures, tank maximum temperature, and LMTD temperature differences.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#0f4c49"/>
+    </marker>
+    <linearGradient id="fluidGrad" x1="0" x2="1">
+      <stop offset="0" stop-color="#2f5f94"/>
+      <stop offset="1" stop-color="#d5673f"/>
+    </linearGradient>
+  </defs>
+  <rect width="1100" height="520" fill="#f7faf8"/>
+  <text x="48" y="58" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="700" fill="#18201f">Hot storage tank boundary</text>
+  <text x="48" y="90" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#50605c">The tank is treated as a hot reservoir at its maximum temperature for the first version of the calculator.</text>
+
+  <rect x="80" y="135" width="700" height="245" rx="8" fill="#dfeee8" stroke="#93aaa3" stroke-width="3"/>
+  <text x="105" y="170" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" fill="#0f4c49">Storage tank</text>
+  <text x="105" y="198" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#18201f">T_tank_max</text>
+
+  <line x1="135" y1="265" x2="730" y2="265" stroke="#808987" stroke-width="48" stroke-linecap="round"/>
+  <line x1="135" y1="265" x2="730" y2="265" stroke="url(#fluidGrad)" stroke-width="30" stroke-linecap="round"/>
+  <line x1="35" y1="265" x2="125" y2="265" stroke="#2f5f94" stroke-width="16" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <line x1="735" y1="265" x2="850" y2="265" stroke="#d5673f" stroke-width="16" stroke-linecap="round" marker-end="url(#arrow)"/>
+
+  <text x="24" y="235" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#2f5f94">Fluid in</text>
+  <text x="34" y="302" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#18201f">T_in</text>
+  <text x="816" y="235" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#a94442">Fluid out</text>
+  <text x="825" y="302" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#18201f">T_out</text>
+
+  <path d="M 430 205 C 450 185, 485 185, 505 205" fill="none" stroke="#c18422" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="448" y="184" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="700" fill="#915d13">Q</text>
+
+  <rect x="820" y="120" width="235" height="285" rx="8" fill="#ffffff" stroke="#d6ddda"/>
+  <text x="845" y="158" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" fill="#18201f">Driving dT</text>
+  <text x="845" y="198" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#18201f">dT1 = T_tank_max - T_in</text>
+  <text x="845" y="230" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#18201f">dT2 = T_tank_max - T_out</text>
+  <line x1="845" y1="252" x2="1030" y2="252" stroke="#d6ddda"/>
+  <text x="845" y="292" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#18201f">LMTD = (dT1 - dT2)</text>
+  <text x="915" y="324" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#18201f">/ ln(dT1 / dT2)</text>
+  <line x1="845" y1="346" x2="1030" y2="346" stroke="#d6ddda"/>
+  <text x="845" y="384" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700" fill="#0f4c49">Q = U * A * LMTD</text>
+
+  <text x="80" y="432" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#50605c">Fluid-side check: Q_fluid = m_dot * cp * (T_out - T_in)</text>
+  <text x="80" y="462" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#50605c">If Q and Q_fluid differ, adjust pipe length, flow speed, outlet temperature, or target heat transfer.</text>
+</svg>

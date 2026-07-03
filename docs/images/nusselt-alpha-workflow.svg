@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="560" viewBox="0 0 1100 560" role="img" aria-labelledby="title desc">
+  <title id="title">Nusselt number and alpha workflow</title>
+  <desc id="desc">Workflow from fluid properties and velocity to Reynolds number, Prandtl number, Nusselt number, alpha, U, and Q.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#0f4c49"/>
+    </marker>
+  </defs>
+  <rect width="1100" height="560" fill="#f7faf8"/>
+  <text x="48" y="58" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="700" fill="#18201f">How alpha is estimated</text>
+  <text x="48" y="90" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#50605c">When manual alpha is empty, the calculator estimates convection from flow and material properties.</text>
+
+  <rect x="55" y="145" width="240" height="185" rx="8" fill="#ffffff" stroke="#d6ddda" stroke-width="2"/>
+  <text x="85" y="182" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#18201f">Inputs</text>
+  <text x="85" y="220" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#18201f">rho: density</text>
+  <text x="85" y="248" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#18201f">nu: kinematic viscosity</text>
+  <text x="85" y="276" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#18201f">cp: heat capacity</text>
+  <text x="85" y="304" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#18201f">k: fluid conductivity</text>
+
+  <line x1="295" y1="238" x2="360" y2="238" stroke="#0f4c49" stroke-width="4" marker-end="url(#arrow)"/>
+
+  <rect x="365" y="130" width="285" height="220" rx="8" fill="#ffffff" stroke="#d6ddda" stroke-width="2"/>
+  <text x="395" y="168" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#18201f">Dimensionless groups</text>
+  <text x="395" y="212" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#18201f">Re = v * D / nu</text>
+  <text x="395" y="248" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#18201f">Pr = cp * rho * nu / k</text>
+  <line x1="395" y1="272" x2="620" y2="272" stroke="#d6ddda"/>
+  <text x="395" y="310" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#50605c">Re says laminar or turbulent.</text>
+  <text x="395" y="336" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#50605c">Pr links momentum and heat diffusion.</text>
+
+  <line x1="650" y1="238" x2="715" y2="238" stroke="#0f4c49" stroke-width="4" marker-end="url(#arrow)"/>
+
+  <rect x="720" y="118" width="325" height="250" rx="8" fill="#ffffff" stroke="#d6ddda" stroke-width="2"/>
+  <text x="750" y="156" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#18201f">Nusselt correlation</text>
+  <text x="750" y="198" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#18201f">Laminar: Nu = 3.66</text>
+  <text x="750" y="230" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#18201f">Turbulent:</text>
+  <text x="780" y="260" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#18201f">Nu = 0.023 * Re^0.8 * Pr^n</text>
+  <text x="780" y="290" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#18201f">n = 0.4 heating, 0.3 cooling</text>
+  <text x="750" y="334" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#50605c">Transition flow is blended between laminar and turbulent estimates.</text>
+
+  <rect x="180" y="415" width="740" height="88" rx="8" fill="#edf3ef" stroke="#d6ddda"/>
+  <text x="220" y="452" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#0f4c49">alpha = Nu * k / D</text>
+  <text x="220" y="484" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#0f4c49">alpha -> resistance chain -> U -> Q = U * A * LMTD</text>
+</svg>
