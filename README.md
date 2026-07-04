@@ -8,34 +8,42 @@ Browser-based calculator for heat transfer from a hot storage tank through a pip
 
 ![Heat storage tank and pipe model](docs/images/heat-storage-pipe-model.svg)
 
-The primary heat-transfer equation is:
+The pipe-side heat transfer is calculated with the standard heat exchanger form:
 
-```text
-Q = U * A * LMTD
+```math
+Q = U A_o \Delta T_{lm}
 ```
 
-Where:
+| Symbol | Meaning | Unit |
+| --- | --- | --- |
+| `Q` | heat transfer rate | W |
+| `U` | overall heat transfer coefficient | W/m2 K |
+| `A_o` | outside pipe surface area | m2 |
+| `Delta T_lm` | log mean temperature difference, LMTD | K |
 
-- `Q` is heat transfer rate in W.
-- `U` is the overall heat exchange coefficient in W/m2 K.
-- `A` is the outside pipe surface area in m2.
-- `LMTD` is the log mean temperature difference between tank temperature and pipe-fluid inlet/outlet temperatures.
+For the hot storage tank boundary, the temperature differences are:
 
-For the hot storage tank boundary:
-
-```text
-deltaT1 = T_tank_max - T_fluid_in
-deltaT2 = T_tank_max - T_fluid_out
-LMTD = (deltaT1 - deltaT2) / ln(deltaT1 / deltaT2)
+```math
+\Delta T_1 = T_{tank,max} - T_{in}
 ```
 
-The fluid-side energy check is:
-
-```text
-Q_fluid = mass_flow * cp * (T_fluid_out - T_fluid_in)
+```math
+\Delta T_2 = T_{tank,max} - T_{out}
 ```
 
-The inside heat-transfer coefficient is estimated from Reynolds, Prandtl, and Nusselt numbers when manual alpha is blank.
+```math
+\Delta T_{lm} =
+\frac{\Delta T_1 - \Delta T_2}
+{\ln \left( \frac{\Delta T_1}{\Delta T_2} \right)}
+```
+
+The fluid-side energy balance is shown as a check:
+
+```math
+Q_{fluid} = \dot{m} c_p \left(T_{out} - T_{in}\right)
+```
+
+If `Q` and `Q_fluid` are far apart, the chosen pipe length, flow speed, outlet temperature, or target heat transfer is not physically balanced yet.
 
 ### Thermal Resistance Model
 
@@ -43,37 +51,56 @@ The inside heat-transfer coefficient is estimated from Reynolds, Prandtl, and Nu
 
 The calculator treats the pipe as a cylindrical heat-transfer path. The total thermal resistance is:
 
-```text
-R_total = R_outside + R_wall + R_inside
+```math
+R_{total} = R_{outside} + R_{wall} + R_{inside}
 ```
 
 Inside convection:
 
-```text
-R_inside = 1 / (alpha_i * A_i)
-A_i = pi * D_i * L
+```math
+R_{inside} = \frac{1}{\alpha_i A_i}
+```
+
+```math
+A_i = \pi D_i L
 ```
 
 Pipe wall conduction:
 
-```text
-R_wall = ln(D_o / D_i) / (2 * pi * k_pipe * L)
-D_o = D_i + 2 * wall_thickness
+```math
+R_{wall} =
+\frac{\ln \left( D_o / D_i \right)}
+{2 \pi k_{pipe} L}
+```
+
+```math
+D_o = D_i + 2s
 ```
 
 Outside medium:
 
-```text
-Fluid outside: R_outside = 1 / (alpha_o * A_o)
-Solid outside: R_outside = ln(D_s / D_o) / (2 * pi * k_medium * L)
-A_o = pi * D_o * L
+```math
+R_{outside,fluid} = \frac{1}{\alpha_o A_o}
+```
+
+```math
+R_{outside,solid} =
+\frac{\ln \left( D_s / D_o \right)}
+{2 \pi k_{medium} L}
+```
+
+```math
+A_o = \pi D_o L
 ```
 
 Overall coefficient:
 
-```text
-U = 1 / (R_total * A_o)
-U * A_o = 1 / R_total
+```math
+U = \frac{1}{R_{total} A_o}
+```
+
+```math
+U A_o = \frac{1}{R_{total}}
 ```
 
 ### Nusselt And Alpha Estimate
@@ -82,27 +109,49 @@ U * A_o = 1 / R_total
 
 When a manual alpha value is not provided, the calculator estimates alpha from fluid properties and flow:
 
-```text
-Re = velocity * diameter / nu
-Pr = cp * rho * nu / k
-alpha = Nu * k / diameter
+```math
+Re = \frac{vD}{\nu}
 ```
 
-Where:
+```math
+Pr = \frac{c_p \rho \nu}{k}
+```
 
-- `Re` is Reynolds number.
-- `Pr` is Prandtl number.
-- `Nu` is Nusselt number.
-- `nu` is kinematic viscosity in m2/s internally. The UI accepts mm2/s and converts it.
-- `alpha` is the convection coefficient in W/m2 K.
+```math
+\alpha = \frac{Nu \, k}{D}
+```
+
+| Symbol | Meaning | Unit |
+| --- | --- | --- |
+| `Re` | Reynolds number | dimensionless |
+| `Pr` | Prandtl number | dimensionless |
+| `Nu` | Nusselt number | dimensionless |
+| `v` | fluid velocity | m/s |
+| `D` | pipe diameter used by the correlation | m |
+| `nu` | kinematic viscosity | m2/s internally |
+| `rho` | density | kg/m3 |
+| `cp` | heat capacity | J/kg K |
+| `k` | fluid thermal conductivity | W/m K |
+| `alpha` | convection coefficient | W/m2 K |
+
+The UI accepts kinematic viscosity in `mm2/s` because that is common in datasheets. The calculator converts it to `m2/s` internally.
 
 Nusselt estimate used in the current version:
 
-```text
-Laminar flow: Nu = 3.66
-Turbulent flow: Nu = 0.023 * Re^0.8 * Pr^n
-n = 0.4 when the fluid is being heated
-n = 0.3 when the fluid is being cooled
+```math
+Nu_{laminar} = 3.66
+```
+
+```math
+Nu_{turbulent} = 0.023 Re^{0.8} Pr^n
+```
+
+```math
+n =
+\begin{cases}
+0.4 & \text{fluid is heated} \\
+0.3 & \text{fluid is cooled}
+\end{cases}
 ```
 
 For transition flow between `Re = 2300` and `Re = 10000`, the app blends between the laminar and turbulent estimates. This is useful for simulation, but final engineering design should verify the correlation against the real geometry and operating range.
